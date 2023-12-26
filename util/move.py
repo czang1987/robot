@@ -146,8 +146,6 @@ if __name__ == '__main__':
         setup()
         print("start");
         move(50,'forward','right');
-        print("done");
-        '''
         motor_left(1, 1, speed_set)
         motor_right(1, 1, speed_set)
         time.sleep(1)
@@ -160,7 +158,6 @@ if __name__ == '__main__':
         motor_left(1, 0, speed_set)
         motor_right(1, 0, speed_set)
         time.sleep(1)
-        '''
     except KeyboardInterrupt:
         destroy()
 
