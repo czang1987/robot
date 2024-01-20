@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Call Python Function</title>
+</head>
+<body>
+  <button id="start_light">SwitchOn</button>
+  <!--script src=/js/script.js></script-->
+		  <script>
+document.getElementById('start_light').addEventListener('click', async () => {
+  const response = await fetch('/start_light_function');
+  const result = await response.json();
+  console.log(result);				  
+				  
+});
+		  </script>
+  <button id="end_light">SwitchOff</button>
+		  <script>
+document.getElementById('end_light').addEventListener('click', async () => {
+  const response = await fetch('/end_light_function');
+  const result = await response.json();
+  console.log(result);				  
+				  
+});
+		  </script>
+    <h1>Video Streaming Demonstration</h1>
+    <img src="{{ url_for('video_feed') }}">
+</body>
+</html>
+
