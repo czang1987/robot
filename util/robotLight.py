@@ -23,6 +23,7 @@ class RobotLight(threading.Thread):
         self.colorBreathG = 0
         self.colorBreathB = 0
         self.breathSteps = 10
+        self.status='run'
 
 
         self.lightMode = 'none'     #'none' 'police' 'breath'
@@ -123,7 +124,7 @@ class RobotLight(threading.Thread):
             GPIO.output(13,GPIO.LOW)
 
 
-    def switch(self, port, status):
+    def switch(self, port, utatus):
         if port == 1:
             if status == 1:
                 GPIO.output(5, GPIO.HIGH)
@@ -172,11 +173,16 @@ class RobotLight(threading.Thread):
 
 
 
+    def exit(self):
+        self.status='exit'
+        self.resume()
 
     def run(self):
         while 1:
             self.__flag.wait()
+            if(self.status=='exit'): break
             self.lightChange()
+
             pass
 
 
