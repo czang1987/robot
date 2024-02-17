@@ -9,6 +9,8 @@
 import time
 import RPi.GPIO as GPIO
 import threading
+from robot.util import ultra
+#from robot.util import utlra
 
 # motor_EN_A: Pin7  |  motor_EN_B: Pin11
 # motor_A:  Pin8,Pin10    |  motor_B: Pin13,Pin12
@@ -135,8 +137,15 @@ class Motor(threading.Thread):
         self.resume()
 
     def _move_forward(self):
-        self.motor_left(1, left_forward, self.speed)
-        self.motor_right(1, right_forward, self.speed)
+        dist=ultra.checkdist()
+        print('distance',dist)
+        
+        if(dist>0.06):
+            self.motor_left(1, left_forward, self.speed)
+            self.motor_right(1, right_forward, self.speed)
+        else:
+            print("stop by dist")
+            self.stop()
 
     def move_backward(self):
         self.status='backward'

@@ -5,28 +5,73 @@ import time,os
 import cv2
 from picamera.array import PiRGBArray
 from picamera import PiCamera
+from robot.util import  ultra
+from robot.robot_car import RobotCar
+
+car=RobotCar()
 
 app = Flask(__name__)
 dir_path=os.path.dirname(os.path.realpath(__file__));
 
-RL=RobotLight();
-RL.start()
+#RL=RobotLight();
+#RL.start()
 #cap=cv2.VideoCapture(0);
+
+@app.route('/move_backward_function', methods=['GET'])
+def move_backward_function():
+    # Your Python function logic goes here
+#    RL.breath(70,70,255)
+    car.test("move_backward")
+    result = {'message': 'move backward called successfully'}
+    return jsonify(result)
+
+@app.route('/turn_left_function', methods=['GET'])
+def turn_left_function():
+    # Your Python function logic goes here
+#    RL.breath(70,70,255)
+    car.test("turn_left")
+    result = {'message': 'turn left called successfully'}
+    return jsonify(result)
+
+@app.route('/turn_right_function', methods=['GET'])
+def turn_right_function():
+    # Your Python function logic goes here
+#    RL.breath(70,70,255)
+    car.test("turn_right")
+    result = {'message': 'turn right called successfully'}
+    return jsonify(result)
+
+@app.route('/move_forward_function', methods=['GET'])
+def move_forward_function():
+    # Your Python function logic goes here
+#    RL.breath(70,70,255)
+    car.test("move_forward")
+    result = {'message': 'move forward called successfully'}
+    return jsonify(result)
+
+@app.route('/motor_stop_function', methods=['GET'])
+def motor_stop_function():
+    # Your Python function logic goes here
+#    RL.breath(70,70,255)
+    car.test("stop")
+    result = {'message': 'motor stop called successfully'}
+    return jsonify(result)
 
 @app.route('/start_light_function', methods=['GET'])
 def start_light_function():
     # Your Python function logic goes here
-    RL.breath(70,70,255)
+#    RL.breath(70,70,255)
+    car.test("breath_on")
     result = {'message': 'start light called successfully'}
     return jsonify(result)
 
 @app.route('/end_light_function', methods=['GET'])
 def end_light_function():
     # Your Python function logic goes here
-    RL.pause();
+    car.test("light_off")
+#    RL.pause();
     result = {'message': 'end light called successfully'}
     return jsonify(result)
-
 '''
 def generate_frames():
     while True:
@@ -43,7 +88,7 @@ def generate_frames():
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-'''
+
 def detect_faces(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
@@ -63,7 +108,7 @@ def gen(camera):
         frame=buffer.tobytes();
 
         yield b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n--frame\r\n'
-
+'''
 
 def cap_video():
 # initialize the camera and grab a reference to the raw camera capture
@@ -80,9 +125,15 @@ def cap_video():
         # grab the raw NumPy array representing the image, then initialize the timestamp
         # and occupied/unoccupied text
         image = frame.array
+
+        #show distance
+        dist_str="%.2f"%ultra.checkdist()
+        image = cv2.putText(image,dist_str,(50,50),cv2.FONT_HERSHEY_SIMPLEX ,1,(255,0,0),2,cv2.LINE_AA)
+
         ret, buffer = cv2.imencode('.jpg', image)
         frame = buffer.tobytes()
-        frame=detect_faces(frame);
+
+#        frame=detect_faces(frame);
         rawCapture.truncate(0)
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
@@ -110,52 +161,3 @@ if __name__ == '__main__':
 
 
 
-# import the necessary packages
-# initialize the camera and grab a reference to the raw camera capture
-
-def cap_image():
-    camera = PiCamera()
-    rawCapture = PiRGBArray(camera)
-    # allow the camera to warmup
-    time.sleep(0.1)
-    # grab an image from the camera
-    camera.capture(rawCapture, format="bgr")
-    image = rawCapture.array
-    return image
-
-
-def cap_video():
-# initialize the camera and grab a reference to the raw camera capture
-    camera = PiCamera()
-    camera.resolution = (640, 480)
-    camera.framerate = 32
-    rawCapture = PiRGBArray(camera, size=(640, 480))
-    # allow the camera to warmup
-    time.sleep(0.1)
-    # capture frames from the camera
-    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-        # grab the raw NumPy array representing the image, then initialize the timestamp
-        # and occupied/unoccupied text
-        image = frame.array
-        # show the frame
-        cv2.imshow("Frame", image)
-#        time.sleep(0.1)
-        key = cv2.waitKey(1) & 0xFF
-        # clear the stream in preparation for the next frame
-        rawCapture.truncate(0)
-        # if the `q` key was pressed, break from the loop
-        if key == ord("q"):
-            break
-
-
-def main():
-    cap_video();
-    s=input("pause");
-    image=cap_image();
-    # display the image on screen and wait for a keypress
-    cv2.imshow("Image", image)
-    cv2.waitKey(0)
-
-
-if(__name__=="__main__"):
-    main();

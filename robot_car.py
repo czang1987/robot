@@ -30,10 +30,16 @@ class RobotCar():
 
 if __name__=='__main__':
     car=RobotCar(60)
-    t=3
+    t=10
     car.test("breath_on")
+    car.test("move_backward")
+    time.sleep(5)
     car.test("move_forward")
-    time.sleep(t)
+    time.sleep(5)
+    car.test("stop")
+    car.test("light_off")
+    car.test('exit')
+    '''
     car.test("turn_right");
     time.sleep(t)
     car.test("turn_left");
@@ -43,3 +49,4 @@ if __name__=='__main__':
     car.test("stop")
     car.test("light_off")
     car.test('exit')
+    '''

@@ -11,83 +11,67 @@ import time
 import RPi.GPIO as GPIO
 import sys
 import Adafruit_PCA9685
-
+import numpy as np
 '''
 change this form 1 to 0 to reverse servos
 '''
-look_direction = 1
+class Servos:
+    def __init__(self):
+        self.pwm = Adafruit_PCA9685.PCA9685()
+        self.pwm.set_pwm_freq(50)
+
+        self.look_max = 500
+        self.look_min = 100
+
+        self.org_pos = 300
+        self.look_direction=True
+#        self.clean_all()
 
 
-pwm = Adafruit_PCA9685.PCA9685()
-pwm.set_pwm_freq(50)
-
-look_max = 500
-look_min = 100
-
-org_pos = 300
-
-def ctrl_range(raw, max_genout, min_genout):
-	if raw > max_genout:
-		raw_output = max_genout
-	elif raw < min_genout:
-		raw_output = min_genout
-	else:
-		raw_output = raw
-	return int(raw_output)
+    def ctrl_range(self,raw, max_genout, min_genout):
+        print(raw,min_genout,max_genout)
+        raw=np.clip(raw,min_genout,max_genout)
+        print(raw)
+        return int(raw)
+        '''
+        if raw > self.max_genout:
+            raw_output = self.max_genout
+        elif raw < min_genout:
+            raw_output = min_genout
+        else:
+            raw_output = raw
+        return int(raw_output)
+        '''
 
 
-def camera_ang(direction, ang='no'):
-	global org_pos
-	if ang == 'no':
-		ang = 50
-	if look_direction:
-		if direction == 'lookdown':
-			if org_pos < 300:
-				org_pos+=ang
-				org_pos = ctrl_range(org_pos, look_max, look_min)		
-		elif direction == 'lookup':
-			org_pos-=ang
-			org_pos = ctrl_range(org_pos, look_max, look_min)
-		elif direction == 'home':
-			org_pos = 300
-	else:
-		if direction == 'lookdown':
-			org_pos-=ang
-			org_pos = ctrl_range(org_pos, look_max, look_min)
-		elif direction == 'lookup':
-			org_pos+=ang
-			org_pos = ctrl_range(org_pos, look_max, look_min)
-		elif direction == 'home':
-			org_pos = 300	
+    def camera_ang(self,direction, ang=50):
+        print(direction)
+        if self.look_direction:
+            if direction == 'lookdown':
+                self.org_pos+=ang
+                self.org_pos = self.ctrl_range(self.org_pos, self.look_max, self.look_min)      
+            elif direction == 'lookup':
+                self.org_pos-=ang
+                self.org_pos = self.ctrl_range(self.org_pos, self.look_max, self.look_min)
+            elif direction == 'home':
+                self.org_pos = 300
+        else:
+            if direction == 'lookdown':
+                self.org_pos-=ang
+                self.org_pos = self.ctrl_range(self.org_pos, self.look_max, self.look_min)
+            elif direction == 'lookup':
+                self.org_pos+=ang
+                self.org_pos = self.ctrl_range(self.org_pos, self.look_max, self.look_min)
+            elif direction == 'home':
+                self.org_pos = 300  
 
-	pwm.set_all_pwm(0,org_pos)
+        self.pwm.set_all_pwm(0,self.org_pos)
 
 
-def clean_all():
-	pwm.set_all_pwm(0, 0)
+    def clean_all(self):
+        self.pwm.set_all_pwm(0, 0)
 
 
 if __name__ == '__main__':
-	camera_ang('lookup')
-	time.sleep(1)
-	camera_ang('lookup')
-	time.sleep(1)
-	camera_ang('lookup')
-	time.sleep(1)
-	camera_ang('lookup')
-	time.sleep(1)
-	camera_ang('lookdown')
-	time.sleep(1)
-	camera_ang('lookdown')
-	time.sleep(1)
-	camera_ang('home')
-	time.sleep(1)
-	'''
-	camera_ang('home', 0)
-	time.sleep(0.4)
-	clean_all()
-	while 1:
-		a=input('press any key')
-		print(camera_ang('lookup', 0))
-		pass
-	'''
+    servos=Servos()
+    servos.camera_ang("lookdown")

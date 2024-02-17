@@ -25,6 +25,51 @@ document.getElementById('end_light').addEventListener('click', async () => {
 				  
 });
 		  </script>
+  <button id="move_forward">MoveForward</button>
+	<script>
+	document.getElementById('move_forward').addEventListener('click', async () => {
+	  const response = await fetch('/move_forward_function');
+	  const result = await response.json();
+	  console.log(result);				  
+				  
+	});
+	</script>
+  <button id="move_backward">MoveBackward</button>
+	<script>
+	document.getElementById('move_backward').addEventListener('click', async () => {
+	  const response = await fetch('/move_backward_function');
+	  const result = await response.json();
+	  console.log(result);				  
+				  
+	});
+	</script>
+  <button id="turn_right">TurnRight</button>
+	<script>
+	document.getElementById('turn_right').addEventListener('click', async () => {
+	  const response = await fetch('/turn_right_function');
+	  const result = await response.json();
+	  console.log(result);				  
+				  
+	});
+	</script>
+  <button id="turn_left">TurnLeft</button>
+	<script>
+	document.getElementById('turn_left').addEventListener('click', async () => {
+	  const response = await fetch('/turn_left_function');
+	  const result = await response.json();
+	  console.log(result);				  
+				  
+	});
+	</script>
+  <button id="motor_stop">MotorStop</button>
+	<script>
+	document.getElementById('motor_stop').addEventListener('click', async () => {
+	  const response = await fetch('/motor_stop_function');
+	  const result = await response.json();
+	  console.log(result);				  
+				  
+	});
+	</script>
     <h1>Video Streaming Demonstration</h1>
     <img src="{{ url_for('video_feed') }}" width="640" height="480">
 </body>
